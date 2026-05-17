@@ -1,0 +1,83 @@
+import random
+import os
+
+# ANSI Color Codes for colorful Termux output
+RED = '\033[91m'
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+BLUE = '\033[94m'
+MAGENTA = '\033[95m'
+CYAN = '\033[96m'
+RESET = '\033[0m'
+BOLD = '\033[1m'
+
+def shuffle_string(text):
+    char_list = list(text)
+    random.shuffle(char_list)
+    return ''.join(char_list)
+
+def display_banner():
+    os.system('clear')
+    print(f"{CYAN}{BOLD}==================================================")
+    print(f"{MAGENTA}{BOLD}       _    ____     __     _    _   _  ____  ")
+    print(f"{YELLOW}{BOLD}      / \  |  _ \    \ \   / /  | | | |/ ___| ")
+    print(f"{GREEN}{BOLD}     / _ \ | | | |____\ \ / /_  | | | | |  _  ")
+    print(f"{RED}{BOLD}    / ___ \| |_| |_____\ V /| |_| | |_| | |_| | ")
+    print(f"{BLUE}{BOLD}   /_/   \_\____/       \_/  \___/ \___/ \____| ")
+    print(f"{CYAN}{BOLD}==================================================")
+    print(f"{YELLOW}{BOLD}       CUSTOM MULTI-PASSWORD GENERATOR v2.0       ")
+    print(f"{CYAN}{BOLD}=================================================={RESET}\n")
+
+def main():
+    display_banner()
+    
+    # Get custom characters or words from the user
+    user_input = input(f"{GREEN}[+] Enter custom text/words to shuffle: {RESET}")
+    clean_input = user_input.replace(" ", "")
+    
+    if len(clean_input) < 4:
+        print(f"\n{RED}[!] Input too short! Please enter a longer text.{RESET}")
+        return
+
+    try:
+        # Ask how many passwords to generate
+        count = int(input(f"{GREEN}[+] How many passwords do you want to generate?: {RESET}"))
+        if count <= 0:
+            print(f"\n{RED}[!] Please enter a number greater than 0.{RESET}")
+            return
+    except ValueError:
+        print(f"\n{RED}[Error] Invalid number input!{RESET}")
+        return
+
+    generated_passwords = []
+    print(f"\n{YELLOW}[*] Generating Passwords...{RESET}")
+    print(f"{CYAN}--------------------------------------------------{RESET}")
+    
+    # Loop to generate multiple unique combinations
+    for i in range(count):
+        pwd = shuffle_string(clean_input)
+        generated_passwords.append(pwd)
+        print(f"{BLUE}[Password {i+1}]:{RESET} {GREEN}{pwd}{RESET}")
+        
+    print(f"{CYAN}--------------------------------------------------{RESET}")
+
+    # Ask user if they want to save to a file
+    save_choice = input(f"\n{YELLOW}[?] Do you want to save these passwords to a file? (y/n): {RESET}").lower()
+    
+    if save_choice == 'y':
+        file_name = input(f"{GREEN}[+] Enter file name (e.g., passwords.txt): {RESET}")
+        if not file_name.endswith('.txt'):
+            file_name += '.txt'
+            
+        try:
+            with open(file_name, 'w') as f:
+                for pwd in generated_passwords:
+                    f.write(pwd + '\n')
+            print(f"\n{GREEN}[✓] Successfully saved {count} passwords to {file_name}!{RESET}")
+        except Exception as e:
+            print(f"\n{RED}[Error] Could not save file: {e}{RESET}")
+    else:
+        print(f"\n{MAGENTA}[*] Passwords not saved. Thank you for using the tool!{RESET}")
+
+if __name__ == "__main__":
+    main()
